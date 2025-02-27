@@ -1,7 +1,6 @@
 #include <vector>
-#include <cmath>
-#include <benchmark/benchmark.h>
 #include <tbb/tbb.h>
+#include <benchmark/benchmark.h>
 
 const int N = 1<<20;
 const int P = 1<<10;
