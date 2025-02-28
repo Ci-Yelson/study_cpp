@@ -19,7 +19,8 @@ endif()
 
 # 若为 Linux 系统，则启用 SSE 指令集
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse3")
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mfma")
 endif()
 
 # 查找 benchmark 包 - vcpkg install benchmark
