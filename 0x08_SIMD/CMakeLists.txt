@@ -17,11 +17,20 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+# 若为 Linux 系统，则启用 SSE 指令集
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse3")
+endif()
+
 # 查找 benchmark 包 - vcpkg install benchmark
 find_package(benchmark REQUIRED)
 
-# 创建可执行文件
-add_executable(simd simd.cpp)
+# 查找 Eigen3 包 - vcpkg install eigen3
+find_package(Eigen3 REQUIRED)
 
-# 链接 benchmark 库
+# 创建可执行文件
+add_executable(simd simd_mat44.cpp)
+
+# 链接库
 target_link_libraries(${PROJECT_NAME} PUBLIC benchmark::benchmark)
+target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
