@@ -40,9 +40,9 @@
 
 *.ini
 
-build/*
-release
-cmake-build*
+**/build/
+**/release/
+**/cmake-build*
 
 .vscode
 .xmake

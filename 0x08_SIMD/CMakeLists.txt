@@ -34,6 +34,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC benchmark::benchmark)
 # 查找 Eigen3 包 - vcpkg install eigen3
 find_package(Eigen3 REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
+add_definitions(-DEIGEN_DONT_PARALLELIZE)
 
 # 查找 libigl 包 - vcpkg install libigl
 find_package(libigl CONFIG REQUIRED)
