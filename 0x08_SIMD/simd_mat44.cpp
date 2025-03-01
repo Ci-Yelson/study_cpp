@@ -1,4 +1,6 @@
 #include <Eigen/Dense>
+#include <chrono>
+#include <spdlog/spdlog.h>
 #include <benchmark/benchmark.h>
 
 #if defined(_WIN32) || defined(__x86_64__)
@@ -7,24 +9,20 @@
 #include <arm_neon.h>   // NEON头文件
 #endif
 
-const int Iter = int(1e3);
 const int N = int(4e3);
 
 using mat44_row = Eigen::Matrix<float, 4, 4, Eigen::RowMajor>;
 using mat44_col = Eigen::Matrix<float, 4, 4, Eigen::ColMajor>; // default
+using matC_type = std::vector<mat44_row>;
 
 std::vector<mat44_row> Ar_vec(N), Br_vec(N);
 std::vector<mat44_col> Ac_vec(N), Bc_vec(N);
-std::vector<mat44_row> C_vec(N);
+matC_type C_vec(N);
 
-void init_mat44_row_vec(std::vector<mat44_row>& vec) {
+template <typename T>
+void init_mat44_vec(std::vector<T>& vec) {
     std::srand(time(nullptr));
-    for (int i = 0; i < N; i++) vec[i] = mat44_row::Random(4, 4);
-}
-
-void init_mat44_col_vec(std::vector<mat44_col>& vec) {
-    std::srand(time(nullptr));
-    for (int i = 0; i < N; i++) vec[i] = mat44_col::Random(4, 4);
+    for (int i = 0; i < N; i++) vec[i] = T::Random(4, 4);
 }
 
 template <typename T1, typename T2>
@@ -38,14 +36,14 @@ double check_C_error(const std::vector<T1>& A_vec, const std::vector<T2>& B_vec)
 template <typename MatA, typename MatB>
 class MatMultiStrategy {
 public:
-    virtual void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, std::vector<mat44_row>& C) = 0;
+    virtual void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, matC_type& C) = 0;
 };
 
 // 顺序计算策略
 template <typename MatA, typename MatB>
 class SequentialStrategy : public MatMultiStrategy<MatA, MatB> {
 public:
-    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, std::vector<mat44_row>& C) override {
+    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, matC_type& C) override {
         for (int i = 0; i < N; i++) {
             C[i] = mat44_col::Zero(4, 4);
             for (int di = 0; di < 4; di++) {
@@ -62,7 +60,7 @@ public:
 template <typename MatA, typename MatB>
 class EigenStrategy : public MatMultiStrategy<MatA, MatB> {
 public:
-    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, std::vector<mat44_row>& C) override {
+    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, matC_type& C) override {
         for (int i = 0; i < N; i++) {
             C[i] = (A[i] * B[i]).eval();
         }
@@ -73,7 +71,7 @@ public:
 template <typename MatA, typename MatB>
 class SIMDStrategy_01 : public MatMultiStrategy<MatA, MatB> {
 public:
-    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, std::vector<mat44_row>& C) override {
+    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, matC_type& C) override {
         for (int i = 0; i < N; i++) {
             for (int di = 0; di < 4; di++) {
                 for (int dj = 0; dj < 4; dj++) {
@@ -93,7 +91,7 @@ public:
 template <typename MatA, typename MatB>
 class SIMDStrategy_reg : public MatMultiStrategy<MatA, MatB> {
 public:
-    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, std::vector<mat44_row>& C) override {
+    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, matC_type& C) override {
         for (int i = 0; i < N; i++) {
             __m128 b0 = _mm_setr_ps(B[i](0, 0), B[i](1, 0), B[i](2, 0), B[i](3, 0));
             __m128 b1 = _mm_setr_ps(B[i](0, 1), B[i](1, 1), B[i](2, 1), B[i](3, 1));
@@ -120,7 +118,7 @@ public:
 template <typename MatA, typename MatB>
 class SIMDStrategy_reg_fmad : public MatMultiStrategy<MatA, MatB> {
 public:
-    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, std::vector<mat44_row>& C) override {
+    void operator()(const std::vector<MatA>& A, const std::vector<MatB>& B, matC_type& C) override {
         for (int i = 0; i < N; i++) {
             // Col Version
             // A x B = [A * bc0, A * bc1, A * bc2, A * bc3]
@@ -182,11 +180,11 @@ public:
 template <typename MatT, typename T1, typename T2>
 const auto& get_Mat_vector(std::vector<T1>& Mr_vec, std::vector<T2>& Mc_vec) {
     if constexpr (std::is_same_v<MatT, mat44_row>)  {
-        init_mat44_row_vec(Mr_vec);
+        init_mat44_vec(Mr_vec);
         return Mr_vec;
     }
     else  {
-        init_mat44_col_vec(Mc_vec);
+        init_mat44_vec(Mc_vec);
         return Mc_vec;
     }
 }
@@ -200,11 +198,15 @@ void BM_MatMulti_Generic(benchmark::State& state) {
     auto& C = C_vec;
 
     Strategy strategy;
+    auto start = std::chrono::high_resolution_clock::now();
     for (auto _ : state) {
         strategy(A, B, C);
     }
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    double avg_ns_per_multi = double(duration.count()) / (N * state.iterations());
     double e = check_C_error(A, B);
-    state.SetLabel("Error: " + std::to_string(e));
+    state.SetLabel(fmt::format("avg_ns_per_multi: {:5.2f} ns, Error: {:5.2f}", avg_ns_per_multi, e));
 }
 
 // 修正后的宏定义
@@ -212,7 +214,7 @@ void BM_MatMulti_Generic(benchmark::State& state) {
 #define REGISTER_BENCHMARK(MatA, MatB, Strategy, MName) \
     BENCHMARK( \
         BM_MatMulti_Generic<MatA, MatB, Strategy<MatA, MatB>> \
-    )->Name(MName)->Unit(benchmark::kMillisecond)->Iterations(Iter)
+    )->Name(MName)->Unit(benchmark::kMillisecond)
 // NOLINTEND
 
 // 注册所有测试

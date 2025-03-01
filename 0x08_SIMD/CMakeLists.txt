@@ -23,15 +23,22 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mfma")
 endif()
 
+# 创建可执行文件
+# add_executable(simd simd_mat44.cpp)
+add_executable(simd simd_svd33.cpp)
+
 # 查找 benchmark 包 - vcpkg install benchmark
 find_package(benchmark REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC benchmark::benchmark)
 
 # 查找 Eigen3 包 - vcpkg install eigen3
 find_package(Eigen3 REQUIRED)
-
-# 创建可执行文件
-add_executable(simd simd_mat44.cpp)
-
-# 链接库
-target_link_libraries(${PROJECT_NAME} PUBLIC benchmark::benchmark)
 target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
+
+# 查找 libigl 包 - vcpkg install libigl
+find_package(libigl CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE igl::igl_core igl_copyleft::igl_copyleft_core)
+
+# 查找 spdlog 包 - vcpkg install spdlog
+find_package(spdlog REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
