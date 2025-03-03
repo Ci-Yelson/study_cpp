@@ -37,9 +37,9 @@ AcBc_simd_reg           0.028 ms        0.029 ms        23890 avg_ns_per_multi: 
 AcBc_simd_reg_fmad      0.023 ms        0.023 ms        29637 avg_ns_per_multi:  5.79 ns, Error:  0.00
 ```
 
-## SIMD Mat 3x3 SVD
+## SIMD Mat 3x3 SVD with TBB
 
-### WSL - AMD Ryzen 7 3700X 8-Core Processor - 16 CPU(s) - [564.23 ns -> 42.12 ns]
+### WSL - AMD Ryzen 7 3700X 8-Core Processor - 16 CPU(s) - [39.49 ns -> 9.87 ns]
 ```
 Run on (16 X 3593.3 MHz CPU s)
 CPU Caches:
@@ -51,8 +51,31 @@ Load Average: 0.41, 0.26, 0.15
 -----------------------------------------------------
 Benchmark           Time             CPU   Iterations
 -----------------------------------------------------
-eigen             592 ms          590 ms            1 avg_ns_per_svd: 564.23 ns, sum_error:   0.00, max_error:  0.00
-igl_scalar        446 ms          450 ms            2 avg_ns_per_svd: 425.23 ns, sum_error: 123.00, max_error:  0.39
-igl_sse          77.8 ms         78.6 ms            9 avg_ns_per_svd:  74.17 ns, sum_error: 123.00, max_error:  0.39
-igl_avx          44.2 ms         44.6 ms           16 avg_ns_per_svd:  42.12 ns, sum_error: 123.00, max_error:  0.39
+eigen                      597 ms          597 ms            1 avg_ns_per_svd: 569.47 ns, sum_error:   0.00, max_error:  0.00
+igl_scalar                 450 ms          450 ms            2 avg_ns_per_svd: 429.23 ns, sum_error: 123.00, max_error:  0.39
+igl_sse                   77.5 ms         77.5 ms            9 avg_ns_per_svd:  73.93 ns, sum_error: 123.00, max_error:  0.39
+igl_avx                   44.3 ms         44.3 ms           16 avg_ns_per_svd:  42.27 ns, sum_error: 123.00, max_error:  0.39
+
+eigen_parallel            41.4 ms         41.4 ms           17 avg_ns_per_svd:  39.49 ns, sum_error:   0.00, max_error:  0.00
+igl_scalar_parallel       38.5 ms         37.3 ms           21 avg_ns_per_svd:  36.70 ns, sum_error: 123.00, max_error:  0.39
+igl_sse_parallel          10.1 ms        10.00 ms           74 avg_ns_per_svd:   9.59 ns, sum_error: 123.00, max_error:  0.39
+igl_avx_parallel          10.3 ms         10.2 ms           73 avg_ns_per_svd:   9.87 ns, sum_error: 123.00, max_error:  0.39
+```
+
+### WSL - 13th Gen Intel(R) Core(TM) i5-13500 - 20 CPU(s) - [27.37 ns -> 15.94 ns] (with TBB)
+```
+Run on (20 X 2496 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x10)
+  L1 Instruction 32 KiB (x10)
+  L2 Unified 1280 KiB (x10)
+  L3 Unified 24576 KiB (x1)
+Load Average: 1.15, 1.61, 1.39
+--------------------------------------------------------------
+Benchmark                    Time             CPU   Iterations
+--------------------------------------------------------------
+eigen_parallel            28.7 ms         28.7 ms           26 avg_ns_per_svd:  27.37 ns, sum_error:   0.00, max_error:  0.00
+igl_scalar_parallel       24.5 ms         24.3 ms           28 avg_ns_per_svd:  23.33 ns, sum_error: 123.25, max_error:  0.39
+igl_sse_parallel          16.0 ms         15.0 ms           53 avg_ns_per_svd:  15.29 ns, sum_error: 123.25, max_error:  0.39
+igl_avx_parallel          16.7 ms         15.3 ms           61 avg_ns_per_svd:  15.94 ns, sum_error: 123.25, max_error:  0.39
 ```

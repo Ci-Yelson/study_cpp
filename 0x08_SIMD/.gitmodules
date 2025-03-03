@@ -1,3 +1,0 @@
-[submodule "Ref/3x3_SVD_CUDA"]
-	path = Ref/3x3_SVD_CUDA
-	url = https://github.com/kuiwuchn/3x3_SVD_CUDA.git

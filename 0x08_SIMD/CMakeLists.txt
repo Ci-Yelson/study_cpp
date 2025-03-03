@@ -34,7 +34,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC benchmark::benchmark)
 # 查找 Eigen3 包 - vcpkg install eigen3
 find_package(Eigen3 REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC Eigen3::Eigen)
-add_definitions(-DEIGEN_DONT_PARALLELIZE)
+add_compile_definitions(EIGEN_DONT_PARALLELIZE)
 
 # 查找 libigl 包 - vcpkg install libigl
 find_package(libigl CONFIG REQUIRED)
@@ -43,3 +43,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE igl::igl_core igl_copyleft::igl_co
 # 查找 spdlog 包 - vcpkg install spdlog
 find_package(spdlog REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC spdlog::spdlog)
+
+# 查找 tbb 包 - vcpkg install tbb
+find_package(TBB REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC TBB::tbb)
