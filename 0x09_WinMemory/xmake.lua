@@ -8,6 +8,11 @@ set_languages("cxx17")
 -- 设置构建模式
 add_rules("mode.release", "mode.debug")
 
+add_requires("vcpkg::eigen3")
+
+-- 在build下生成compile_commands.json
+add_rules("plugin.compile_commands.autoupdate", {outputdir = "build"})
+
 -- 添加目标
 target("mem")
     set_kind("binary")
