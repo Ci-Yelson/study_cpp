@@ -1,6 +1,8 @@
+#include "oneapi/tbb/partitioner.h"
 #include <Eigen/Dense>
 #include <benchmark/benchmark.h>
-#include <fmt/format.h>
+#include <iostream>
+#include <spdlog/fmt/fmt.h>
 #include <fstream>
 #include <chrono>
 
@@ -264,6 +266,11 @@ static std::string CyanTail() { return "\x1b[0m"; }
 
 template <typename Method>
 void BM_Test(benchmark::State& state) {
+    // 在主函数或需要限制线程的地方
+    tbb::global_control global_limit(
+        tbb::global_control::max_allowed_parallelism, 
+        16
+    );
     auto start = std::chrono::high_resolution_clock::now();
     Method method;
     for (auto _ : state) {

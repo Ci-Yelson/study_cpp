@@ -37,6 +37,43 @@ AcBc_simd_reg           0.028 ms        0.029 ms        23890 avg_ns_per_multi: 
 AcBc_simd_reg_fmad      0.023 ms        0.023 ms        29637 avg_ns_per_multi:  5.79 ns, Error:  0.00
 ```
 
+### WSL - 13th Gen Intel(R) Core(TM) i5-13500 - 20 CPU(s) - [14.32 ns -> 4.09 ns] (with TBB)
+```
+Run on (20 X 2496 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x10)
+  L1 Instruction 32 KiB (x10)
+  L2 Unified 1280 KiB (x10)
+  L3 Unified 24576 KiB (x1)
+Load Average: 1.15, 1.61, 1.39
+--------------------------------------------------------------
+Benchmark                    Time             CPU   Iterations
+--------------------------------------------------------------
+ArBr_seq                0.051 ms        0.051 ms        12726 avg_ns_per_multi: 12.80 ns, Error:  0.00
+ArBr_eigen              0.016 ms        0.016 ms        41209 avg_ns_per_multi:  4.07 ns, Error:  0.00
+ArBr_simd01             0.097 ms        0.097 ms         7109 avg_ns_per_multi: 24.34 ns, Error:  0.00
+ArBr_simd_reg           0.032 ms        0.032 ms        22261 avg_ns_per_multi:  8.02 ns, Error:  0.00
+ArBr_simd_reg_fmad      0.010 ms        0.010 ms        59721 avg_ns_per_multi:  2.41 ns, Error:  0.00
+
+ArBc_seq                0.051 ms        0.051 ms        13150 avg_ns_per_multi: 12.64 ns, Error:  0.00
+ArBc_eigen              0.037 ms        0.037 ms        19192 avg_ns_per_multi:  9.19 ns, Error:  0.00
+ArBc_simd01             0.058 ms        0.058 ms        11969 avg_ns_per_multi: 14.38 ns, Error:  0.00
+ArBc_simd_reg           0.021 ms        0.021 ms        33453 avg_ns_per_multi:  5.29 ns, Error:  0.00
+ArBc_simd_reg_fmad      0.015 ms        0.015 ms        40675 avg_ns_per_multi:  3.86 ns, Error:  0.00
+
+AcBr_seq                0.056 ms        0.056 ms        12623 avg_ns_per_multi: 14.10 ns, Error:  0.00
+AcBr_eigen              0.016 ms        0.016 ms        44717 avg_ns_per_multi:  4.06 ns, Error:  0.00
+AcBr_simd01             0.140 ms        0.140 ms         4972 avg_ns_per_multi: 34.94 ns, Error:  0.00
+AcBr_simd_reg           0.043 ms        0.043 ms        16381 avg_ns_per_multi: 10.85 ns, Error:  0.00
+AcBr_simd_reg_fmad      0.012 ms        0.012 ms        62435 avg_ns_per_multi:  3.00 ns, Error:  0.00
+
+AcBc_seq                0.057 ms        0.057 ms        12745 avg_ns_per_multi: 14.32 ns, Error:  0.00
+AcBc_eigen              0.016 ms        0.016 ms        43821 avg_ns_per_multi:  3.98 ns, Error:  0.00
+AcBc_simd01             0.103 ms        0.103 ms         6787 avg_ns_per_multi: 25.68 ns, Error:  0.00
+AcBc_simd_reg           0.033 ms        0.033 ms        20857 avg_ns_per_multi:  8.14 ns, Error:  0.00
+AcBc_simd_reg_fmad      0.016 ms        0.016 ms        42109 avg_ns_per_multi:  4.09 ns, Error:  0.00
+```
+
 ## SIMD Mat 3x3 SVD with TBB
 
 ### WSL - AMD Ryzen 7 3700X 8-Core Processor - 16 CPU(s) - [39.49 ns -> 9.87 ns]
@@ -62,7 +99,7 @@ igl_sse_parallel          10.1 ms        10.00 ms           74 avg_ns_per_svd:  
 igl_avx_parallel          10.3 ms         10.2 ms           73 avg_ns_per_svd:   9.87 ns, sum_error: 123.00, max_error:  0.39
 ```
 
-### WSL - 13th Gen Intel(R) Core(TM) i5-13500 - 20 CPU(s) - [27.37 ns -> 15.94 ns] (with TBB)
+### WSL - 13th Gen Intel(R) Core(TM) i5-13500 - 20 CPU(s) - [29.61 ns -> 16.20 ns] (with TBB)
 ```
 Run on (20 X 2496 MHz CPU s)
 CPU Caches:
@@ -74,8 +111,13 @@ Load Average: 1.15, 1.61, 1.39
 --------------------------------------------------------------
 Benchmark                    Time             CPU   Iterations
 --------------------------------------------------------------
-eigen_parallel            28.7 ms         28.7 ms           26 avg_ns_per_svd:  27.37 ns, sum_error:   0.00, max_error:  0.00
-igl_scalar_parallel       24.5 ms         24.3 ms           28 avg_ns_per_svd:  23.33 ns, sum_error: 123.25, max_error:  0.39
-igl_sse_parallel          16.0 ms         15.0 ms           53 avg_ns_per_svd:  15.29 ns, sum_error: 123.25, max_error:  0.39
-igl_avx_parallel          16.7 ms         15.3 ms           61 avg_ns_per_svd:  15.94 ns, sum_error: 123.25, max_error:  0.39
+eigen                      419 ms          419 ms            2 avg_ns_per_svd: 399.91 ns, sum_error:   0.00, max_error:  0.00
+igl_scalar                 395 ms          395 ms            2 avg_ns_per_svd: 376.29 ns, sum_error: 123.25, max_error:  0.39
+igl_sse                   74.7 ms         74.7 ms            9 avg_ns_per_svd:  71.23 ns, sum_error: 123.25, max_error:  0.39
+igl_avx                   46.3 ms         46.3 ms           15 avg_ns_per_svd:  44.13 ns, sum_error: 123.25, max_error:  0.39
+
+eigen_parallel            31.0 ms         31.0 ms           24 avg_ns_per_svd:  29.61 ns, sum_error:   0.00, max_error:  0.00
+igl_scalar_parallel       25.7 ms         25.7 ms           26 avg_ns_per_svd:  24.49 ns, sum_error: 123.25, max_error:  0.39
+igl_sse_parallel          16.6 ms         16.3 ms           46 avg_ns_per_svd:  15.82 ns, sum_error: 123.25, max_error:  0.39
+igl_avx_parallel          17.0 ms         15.5 ms           43 avg_ns_per_svd:  16.20 ns, sum_error: 123.25, max_error:  0.39
 ```
