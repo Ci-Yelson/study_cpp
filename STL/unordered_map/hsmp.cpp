@@ -32,7 +32,7 @@ void init_data() {
 
 class Strategy {
 public:
-    virtual void insert_test() = 0;
+    virtual void insert_test(int64_t k, int v) = 0;
     virtual void lookup_test() = 0;
     virtual void delete_test() = 0;
     virtual ~Strategy() = default;
@@ -43,11 +43,8 @@ private:
     std::unordered_map<int64_t, int> map;
 
 public:
-    void insert_test() override {
-        for (int i = 0; i < N; i++) {
-            map.insert({keys[i], values[i]});
-        }
-        benchmark::DoNotOptimize(map);
+    void insert_test(int64_t k, int v) override {
+        map.insert({k, v});
     }
 
     void lookup_test() override {
@@ -69,11 +66,8 @@ private:
     absl::flat_hash_map<int64_t, int> map;
 
 public:
-    void insert_test() override {
-        for (int i = 0; i < N; i++) {
-            map.insert({keys[i], values[i]});
-        }
-        benchmark::DoNotOptimize(map);
+    void insert_test(int64_t k, int v) override {
+        map.insert({k, v});
     }
 
     void lookup_test() override {
@@ -94,16 +88,25 @@ template<class Strategy>
 void BM_Insert(benchmark::State& state) {
     init_data();
     Strategy strategy;
+    double max_time_insert_ns = 0;
     for (auto _ : state) {
-        strategy.insert_test();
+        for (int i = 0; i < N; i++) {
+            auto start = std::chrono::high_resolution_clock::now();
+            strategy.insert_test(keys[i], values[i]);
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+            max_time_insert_ns = std::max(max_time_insert_ns, duration.count() * 1.0);
+        }
     }
+    state.SetLabel(fmt::format("max_time_insert_ns: {}", max_time_insert_ns));
 }
 
 template<class Strategy>
 void BM_Lookup(benchmark::State& state) {
     init_data();
     Strategy strategy;
-    strategy.insert_test();  // 先插入数据
+    for (int i = 0; i < N; i++) 
+        strategy.insert_test(keys[i], values[i]);
     for (auto _ : state) {
         strategy.lookup_test();
     }
@@ -113,7 +116,8 @@ template<class Strategy>
 void BM_Delete(benchmark::State& state) {
     init_data();
     Strategy strategy;
-    strategy.insert_test();  // 先插入数据
+    for (int i = 0; i < N; i++) 
+        strategy.insert_test(keys[i], values[i]);
     for (auto _ : state) {
         strategy.delete_test();
     }

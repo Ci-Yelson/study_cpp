@@ -108,7 +108,10 @@ list(APPEND 3rdParty_Link_Libraries absl::base absl::strings absl::flat_hash_map
 # 创建可执行文件
 ################################################################################
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/unordered_map/hsmp.cpp)
-add_executable(hs_test ${PROJECT_SOURCE_DIR}/unordered_map/hs_test.cpp)
-
 target_link_libraries(${PROJECT_NAME} ${3rdParty_Link_Libraries})
+
+add_executable(hs_test ${PROJECT_SOURCE_DIR}/unordered_map/hs_test.cpp)
 target_link_libraries(hs_test ${3rdParty_Link_Libraries})
+
+add_executable(forward ${PROJECT_SOURCE_DIR}/forward/forward.cpp)
+target_link_libraries(forward ${3rdParty_Link_Libraries})
