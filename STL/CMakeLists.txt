@@ -118,3 +118,6 @@ target_link_libraries(forward ${3rdParty_Link_Libraries})
 
 add_executable(heapOnly ${PROJECT_SOURCE_DIR}/tests/heapOnly.cpp)
 target_link_libraries(heapOnly ${3rdParty_Link_Libraries})
+
+add_executable(nullptr ${PROJECT_SOURCE_DIR}/tests/nullptr.cpp)
+target_link_libraries(nullptr ${3rdParty_Link_Libraries})
