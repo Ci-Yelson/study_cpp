@@ -85,7 +85,7 @@ public:
 };
 
 template<class Strategy>
-void BM_Insert(benchmark::State& state) {
+void BM_Insert_MaxInsertTime(benchmark::State& state) {
     init_data();
     Strategy strategy;
     double max_time_insert_ns = 0;
@@ -99,6 +99,17 @@ void BM_Insert(benchmark::State& state) {
         }
     }
     state.SetLabel(fmt::format("max_time_insert_ns: {}", max_time_insert_ns));
+}
+
+template<class Strategy>
+void BM_Insert(benchmark::State& state) {
+    init_data();
+    Strategy strategy;
+    for (auto _ : state) {
+        for (int i = 0; i < N; i++) {
+            strategy.insert_test(keys[i], values[i]);
+        }
+    }
 }
 
 template<class Strategy>
@@ -124,6 +135,9 @@ void BM_Delete(benchmark::State& state) {
 }
 
 // 注册benchmark测试
+BENCHMARK(BM_Insert_MaxInsertTime<StdHashMapStrategy>)->Name("STL_Insert_MaxInsertTime")->Unit(benchmark::kMillisecond);
+BENCHMARK(BM_Insert_MaxInsertTime<AbslHashMapStrategy>)->Name("Abseil_Insert_MaxInsertTime")->Unit(benchmark::kMillisecond);
+
 BENCHMARK(BM_Insert<StdHashMapStrategy>)->Name("STL_Insert")->Unit(benchmark::kMillisecond);
 BENCHMARK(BM_Insert<AbslHashMapStrategy>)->Name("Abseil_Insert")->Unit(benchmark::kMillisecond);
 
