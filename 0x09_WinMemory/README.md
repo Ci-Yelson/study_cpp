@@ -28,5 +28,5 @@
 
 ### 代码现象
 
-- Windows：未压缩的稀疏矩阵会产生大量内存碎片，每个outerStarts数组单独提交
-- Linux：即使未压缩，由于延迟提交，实际物理内存占用增长缓慢
+- Windows：new 和 malloc 申请的内存大小如果超过 pagefile.sys 大小，会直接Down掉。
+- Linux：new 和 malloc 申请的内存大小无限制。

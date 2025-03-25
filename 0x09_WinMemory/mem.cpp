@@ -1,6 +1,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <chrono>
+#include <cstdlib>
 #include <iostream>
 #include <thread>
 
@@ -62,21 +63,37 @@ class MemTest {
     Eigen::SparseMatrix<double, Eigen::RowMajor> Si;    // CRS
     // Eigen::SparseMatrix<double, Eigen::ColMajor> Si_T;  // CCS
 
+    int* m_malloc_data;
+
 public:
+    // MemTest() {
+    //     Si.setZero();
+    //     Si.resize(12, MAT_N);
+    //     for (int i = 0; i < 12; i++) {
+    //         Si.insert(i, i) = 7;
+    //     }
+    //     // Si.makeCompressed(); // 启用makeCompressed()后，不再会出现虚存爆炸的问题.
+    // }
+    // MemTest() {
+    //     m_malloc_data = static_cast<int*>(std::malloc(3000 * sizeof(int)));
+    // }
+    // ~MemTest() {
+    //     free(static_cast<void*>(m_malloc_data));
+    // }
     MemTest() {
-        Si.setZero();
-        Si.resize(12, MAT_N);
-        for (int i = 0; i < 12; i++) {
-            Si.insert(i, i) = 7;
-        }
-        // Si.makeCompressed(); // 启用makeCompressed()后，不再会出现虚存爆炸的问题.
+        m_malloc_data = new int [3000];
+    }
+    ~MemTest() {
+        delete [] m_malloc_data;
     }
 };
 
 
 int main() {
     std::vector<MemTest> mem_test(N);
-    std::cout << "mem_test.size() = " << mem_test.size() << std::endl;
+    // std::cout << "mem_test.size() = " << mem_test.size() << std::endl;
+    std::cout << "Mem Computation = " << (1.0 * N * 3000 * sizeof(int) / 1024.0 / 1024.0  ) << " MB" << std::endl;
+
     while (true) {
         std::cout << "Memory usage: " << (GetMemoryUsage() / 1024.0) << " MB" << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
