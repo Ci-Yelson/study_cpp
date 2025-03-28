@@ -29,8 +29,8 @@ int main() {
     A* a = nullptr;
     a->func(); // 可以执行
     a->static_func(); // 可以执行
-    a->virtual_func(); // segmentation fault
-    std::cout << a->val << std::endl; // segmentation fault
+    // a->virtual_func(); // segmentation fault
+    // std::cout << a->val << std::endl; // segmentation fault
     delete a;
     return 0;
 }

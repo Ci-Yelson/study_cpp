@@ -5,9 +5,14 @@ cmake_minimum_required(VERSION 3.22)
 # set(CMAKE_TOOLCHAIN_FILE "~/No.Softwares/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 # Set default minimum C++ standard
-set(CMAKE_CXX_STANDARD 17)
+# set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# for C++20
+set(CMAKE_C_COMPILER gcc-13)
+set(CMAKE_CXX_COMPILER g++-13)
 
 # 设置导出 compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -116,8 +121,12 @@ target_link_libraries(hs_test ${3rdParty_Link_Libraries})
 add_executable(forward ${PROJECT_SOURCE_DIR}/forward/forward.cpp)
 target_link_libraries(forward ${3rdParty_Link_Libraries})
 
+# tests/
 add_executable(heapOnly ${PROJECT_SOURCE_DIR}/tests/heapOnly.cpp)
 target_link_libraries(heapOnly ${3rdParty_Link_Libraries})
 
 add_executable(nullptr ${PROJECT_SOURCE_DIR}/tests/nullptr.cpp)
 target_link_libraries(nullptr ${3rdParty_Link_Libraries})
+
+add_executable(str ${PROJECT_SOURCE_DIR}/tests/str.cpp)
+target_link_libraries(str ${3rdParty_Link_Libraries})
