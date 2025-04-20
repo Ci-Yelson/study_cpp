@@ -130,3 +130,6 @@ target_link_libraries(nullptr ${3rdParty_Link_Libraries})
 
 add_executable(str ${PROJECT_SOURCE_DIR}/tests/str.cpp)
 target_link_libraries(str ${3rdParty_Link_Libraries})
+
+add_executable(primes ${PROJECT_SOURCE_DIR}/primes/primes.cpp)
+target_link_libraries(primes ${3rdParty_Link_Libraries})
