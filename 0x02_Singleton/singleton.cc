@@ -179,16 +179,18 @@ std::mutex Singleton04::m_mutex;
 // 线程安全
 class Singleton05 {
 public:
-    static Singleton05* GetInstance() {
+    static Singleton05& GetInstance() {
         // 1. 延迟加载：真正按需创建（首次调用时构造），而非传统饿汉式的程序启动即初始化
         // 2. 线程安全：C++11标准保证静态局部变量的初始化是线程安全的，无需额外加锁
         // 3. 自动释放：静态变量在程序退出时自动析构，无需手动delete或注册atexit
         // 4. 内存序安全：编译器保证静态变量初始化的原子性和可见性，无DCLP（双重检查锁定）问题
         static Singleton05 instance;
-        return &instance;
+        return instance;
     }
 private:
+    // 私有构造函数，禁止外部实例化(直接创建或new) - 即只能通过GetInstance()获取实例
     Singleton05() { std::cout << "Singleton05 constructor" << std::endl; }
+    // 私有析构函数，禁止外部析构(直接析构或delete)
     ~Singleton05() { std::cout << "Singleton05 destructor" << std::endl; }
     // 禁止拷贝构造和赋值
     Singleton05(const Singleton05&) = delete;
@@ -233,5 +235,9 @@ private:
 
 
 int main() {
+    // Singleton05 inst1; // 错误：Singleton05的构造函数是private的，不能直接实例化
+    // Singleton05* inst2 = new Singleton05(); // 错误：Singleton05的构造函数是private的，不能直接new
+    // delete inst2; // 错误：Singleton05的析构函数是private的，不能直接析构
+    Singleton05& inst = Singleton05::GetInstance();
     return 0;
 }

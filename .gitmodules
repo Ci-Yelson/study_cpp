@@ -4,3 +4,9 @@
 [submodule "Sympy/SymEigen"]
 	path = Sympy/SymEigen
 	url = https://github.com/MuGdxy/SymEigen.git
+[submodule "0x12_Reflection/_Refs/USRefl"]
+	path = 0x12_Reflection/_Refs/USRefl
+	url = https://github.com/Ubpa/USRefl.git
+[submodule "0x12_Reflection/_Refs/UDRefl"]
+	path = 0x12_Reflection/_Refs/UDRefl
+	url = https://github.com/Ubpa/UDRefl.git
