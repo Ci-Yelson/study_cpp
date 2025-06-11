@@ -2,12 +2,14 @@
 #include <iostream>
 #include <format>
 
-enum class Color : int { RED = -10, BLUE = 0, GREEN = 1000000 };
+// enum class Color : int { RED = -10, BLUE = 0, GREEN = 1000000 };
+enum class Color : int { RED = -10, BLUE = 0, GREEN = 10 };
 
 template <>
 struct magic_enum::customize::enum_range<Color> {
   static constexpr int min = -10;
-  static constexpr int max = 1000000; // Cannot work with 1000000
+  // static constexpr int max = 1000000; // Cannot work with 1000000
+  static constexpr int max = 10;
   // (max - min) must be less than UINT16_MAX.
 };
 

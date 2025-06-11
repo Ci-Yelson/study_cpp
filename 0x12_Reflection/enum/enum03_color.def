@@ -1,0 +1,9 @@
+#ifndef COLOR_ENUM
+#define COLOR_ENUM(...)
+#endif
+
+COLOR_ENUM(RED)
+COLOR_ENUM(GREEN)
+COLOR_ENUM(BLUE)
+
+#undef COLOR_ENUM

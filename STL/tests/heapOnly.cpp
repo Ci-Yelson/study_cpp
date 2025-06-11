@@ -58,7 +58,8 @@ int main()
     {
         char       obj_buffer[sizeof(StackOnly)];
         StackOnly* obj_stack = new (&obj_buffer[0]) StackOnly();
-        obj_stack->~StackOnly();
+        // obj_stack->~StackOnly();
+        delete obj_stack;
     }
 
     atexit([]() { std::cout << "atexit" << std::endl; });

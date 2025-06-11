@@ -23,4 +23,4 @@ endif()
 
 project(reflection)
 
-add_subdirectory(Enum)
+add_subdirectory(enum)
